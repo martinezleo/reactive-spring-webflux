@@ -33,10 +33,18 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
-	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	//testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+tasks.named('test', Test) {
 	useJUnitPlatform()
+}
+
+sourceSets {
+	test {
+		java {
+			srcDirs = ['src/test/java/unit', 'src/test/java/intg']
+		}
+	}
 }
