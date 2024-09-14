@@ -14,6 +14,7 @@ import reactor.test.StepVerifier;
 import java.util.List;
 import java.time.LocalDate;
 
+
 @DataMongoTest
 @ActiveProfiles("test")
 public class MovieInfoRepositoryIntgTest {
@@ -26,7 +27,7 @@ public class MovieInfoRepositoryIntgTest {
         var movieInfos = List.of(
             new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15")),
             new MovieInfo(null, "The Dark Knight", 2005, List.of("Christian Bale", "Heath Ledger"), LocalDate.parse("2008-07-18")),
-            new MovieInfo(null, "Dark Knight Rises", 2005, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"))
+            new MovieInfo("abc", "Dark Knight Rises", 2005, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"))
         );
 
         movieInfoRepository.saveAll(movieInfos).blockLast();
