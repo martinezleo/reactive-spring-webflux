@@ -22,7 +22,7 @@ public class MoviesInfoService {
         return moviesInfoRepository.findAll().log();
     }
 
-    public Mono<MovieInfo> getAMovieInfo(String id) {
+    public Mono<MovieInfo> getMovieInfo(String id) {
         return moviesInfoRepository.findById(id).log();
     }
 
@@ -42,6 +42,10 @@ public class MoviesInfoService {
 
         });
         return monoMovieInfo;
+    }
+
+    public Mono<Void> deleteMovieInfo(String id) {
+        return moviesInfoRepository.deleteById(id).log();
     }
 
 }

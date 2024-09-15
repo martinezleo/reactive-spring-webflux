@@ -8,18 +8,21 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import com.reactivespring.domain.MovieInfo;
 import com.reactivespring.repository.MoviesInfoRepository;
 
 import de.flapdoodle.embed.mongo.spring.autoconfigure.EmbeddedMongoAutoConfiguration;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.time.LocalDate;
 
@@ -164,4 +167,20 @@ public class MoviesInfoControllerIntgTest {
 
     }
 
+    @Test
+    void deleteMovieInfos() {
+
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos/{id}")
+                .build("abc"))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(Void.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertNull(result);
+            });
+    }
 }

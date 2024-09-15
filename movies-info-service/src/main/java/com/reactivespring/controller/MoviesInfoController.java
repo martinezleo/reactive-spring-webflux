@@ -1,6 +1,7 @@
 package com.reactivespring.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,7 @@ public class MoviesInfoController {
 
     @GetMapping("/movieinfos/{id}")
     public Mono<MovieInfo> getAllMovieInfo(@PathVariable String id) {
-        return moviesInfoService.getAMovieInfo(id);
+        return moviesInfoService.getMovieInfo(id);
     }
 
     @PostMapping("/movieinfos")
@@ -44,9 +45,13 @@ public class MoviesInfoController {
     }
 
     @PutMapping("/movieinfos/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
     public Mono<MovieInfo> updateMovieInfo(@RequestBody MovieInfo movieInfo, @PathVariable String id) {
         return moviesInfoService.updateMovieInfo(movieInfo, id);
     }
 
+    @DeleteMapping("/movieinfos/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deleteMovieInfo(@PathVariable String id) {
+        return moviesInfoService.deleteMovieInfo(id);
+    }
 }
