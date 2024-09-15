@@ -9,18 +9,23 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.reactivespring.domain.MovieInfo;
 
+import de.flapdoodle.embed.mongo.spring.autoconfigure.EmbeddedMongoAutoConfiguration;
 import reactor.test.StepVerifier;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.time.LocalDate;
 
 
-@DataMongoTest
+@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
 @ActiveProfiles("test")
 public class MovieInfoRepositoryIntgTest {
 
     @Autowired
-    MovieInfoRepository movieInfoRepository;
+    MoviesInfoRepository movieInfoRepository;
 
     @BeforeEach
     void setup() {
@@ -45,6 +50,61 @@ public class MovieInfoRepositoryIntgTest {
 
         StepVerifier.create(movieInfoFlux)
             .expectNextCount(3)
+            .verifyComplete();
+    }
+
+    @Test
+    void findById() {
+
+        var movieInfoMono = movieInfoRepository.findById("abc").log();
+
+        StepVerifier.create(movieInfoMono)
+            .assertNext(movieInfo -> {
+                assertEquals("Dark Knight Rises", movieInfo.getName());
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    void saveMovieInfo() {
+
+        var movie = new MovieInfo(null, "Batman Begins Again", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2015-06-15"));
+        var movieInfoMono = movieInfoRepository.save(movie).log();
+
+        StepVerifier.create(movieInfoMono)
+            .assertNext(movieInfo -> {
+                assertNotNull(movieInfo.getMovieInfoId());
+                assertEquals("Batman Begins Again", movieInfo.getName());
+            })
+            .verifyComplete();
+    }
+
+    @Test
+    void updateMovieInfo() {
+
+        var movie = movieInfoRepository.findById("abc").block();
+        movie.setYear(2021);
+        movie.setName("Batman Begins Again II");
+
+        var movieInfoMono = movieInfoRepository.save(movie).log();
+
+        StepVerifier.create(movieInfoMono)
+            .assertNext(movieInfo -> {
+                assertEquals("Batman Begins Again II", movieInfo.getName());
+                assertEquals(2021, movieInfo.getYear());
+            })
+            .verifyComplete();
+    }
+
+    @Test
+
+    void deleteById() {
+
+        movieInfoRepository.deleteById("abc").block();
+        var movieInfoFlux = movieInfoRepository.findAll().log();
+
+        StepVerifier.create(movieInfoFlux)
+            .expectNextCount(2)
             .verifyComplete();
     }
 
