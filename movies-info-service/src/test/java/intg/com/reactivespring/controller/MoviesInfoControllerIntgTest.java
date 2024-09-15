@@ -85,6 +85,20 @@ public class MoviesInfoControllerIntgTest {
     }
 
     @Test
+    void getMovieInfoJson() {
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos/{id}")
+                .build("abc"))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody()
+            .jsonPath("$.name").isEqualTo("Dark Knight Rises");
+    }
+
+    @Test
     void addMovieInfo() {
 
         var movieInfo = new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
@@ -108,8 +122,9 @@ public class MoviesInfoControllerIntgTest {
 
     @Test
     void addMovieInfoConsume() {
-
+        
         var movieInfo = new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+                
         webTestClient.post()
             .uri("/v1/movieinfos")
             .bodyValue(movieInfo)
@@ -120,6 +135,31 @@ public class MoviesInfoControllerIntgTest {
             .consumeWith( resultBody -> {
                 var result = resultBody.getResponseBody();
                 assertNotNull(result.getMovieInfoId());
+            });
+
+    }
+
+    @Test
+    void updateMovieInfo() {
+
+        var movieInfo = new MovieInfo("abc", "Updated Dark Knight Rises", 2024, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2024-07-20"));
+
+        webTestClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos/{id}")
+                .build("abc"))
+            .bodyValue(movieInfo)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(MovieInfo.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertEquals("abc", result.getMovieInfoId());
+                assertEquals("Updated Dark Knight Rises", result.getName());
+                assertEquals(2024, result.getYear());
+                assertEquals(LocalDate.parse("2024-07-20"), result.getReleaseDate());
+                assertEquals(List.of("Christian Bale", "Tom Hardy"), result.getCast());
             });
 
     }
