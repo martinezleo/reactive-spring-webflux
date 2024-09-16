@@ -213,16 +213,4 @@ public class MoviesInfoControllerIntgTest {
             });
     }
 
-    @Test
-    void deleteMovieInfoNotFound() {
-
-        webTestClient.delete()
-            .uri(uriBuilder -> uriBuilder
-                .path("/v1/movieinfos/{id}")
-                .build("def"))
-            .exchange()
-            .expectStatus()
-            .isNotFound();
-
-    }
 }

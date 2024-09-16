@@ -225,22 +225,4 @@ public class MoviesInfoControllerUnitTest {
             });
     }
 
-    @Test
-    void deleteMovieInfoNotFound() {
-
-        Mono<Void> monoNotFoundMovieInfo = Mono.empty();
-
-        when(moviesInfoServiceMock.deleteMovieInfo("def"))
-            .thenReturn(monoNotFoundMovieInfo);
-
-        webTestClient.delete()
-            .uri(uriBuilder -> uriBuilder
-                .path(MOVIES_INFO_URL + "/{id}")
-                .build("def"))
-            .exchange()
-            .expectStatus()
-            .isNotFound();
-
-    }
-
 }
