@@ -166,6 +166,26 @@ public class MoviesInfoControllerUnitTest {
     }
 
     @Test
+    void updateMovieInfoNotFound() {
+
+        var movieInfo = new MovieInfo("abc", "Updated Dark Knight Rises", 2024, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2024-07-20"));
+        Mono<MovieInfo> monoNotFoundMovieInfo = Mono.empty();
+
+        when(moviesInfoServiceMock.updateMovieInfo(movieInfo, "def"))
+            .thenReturn(monoNotFoundMovieInfo);
+
+        webTestClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("def"))
+            .bodyValue(movieInfo)
+            .exchange()
+            .expectStatus()
+            .isNotFound();
+
+    }
+
+    @Test
     void deleteMovieInfos() {
 
         Mono<Void> monoInputMovieInfo = Mono.empty();
