@@ -1,5 +1,8 @@
 package com.reactivespring.controller;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -14,6 +17,8 @@ import com.reactivespring.domain.MovieInfo;
 import com.reactivespring.service.MoviesInfoService;
 
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import java.util.List;
 import java.time.LocalDate;
@@ -52,6 +57,109 @@ public class MoviesInfoControllerUnitTest {
         .expectBodyList(MovieInfo.class)
         .hasSize(3);
 
+    }
+
+    @Test
+    void getMovieInfo() {
+
+        var movieInfo = new MovieInfo("abc", "Dark Knight Rises", 2005, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"));
+        Mono<MovieInfo> monoInputMovieInfo = Mono.just(movieInfo);
+
+        when(moviesInfoServiceMock.getMovieInfo("abc"))
+            .thenReturn(monoInputMovieInfo);
+
+        var monoMovieInfo = webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("abc"))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .returnResult(MovieInfo.class)
+            .getResponseBody();
+
+        StepVerifier.create(monoMovieInfo)
+            .assertNext(result -> {
+                assertEquals("abc", result.getMovieInfoId());
+                assertEquals("Dark Knight Rises", result.getName());
+            })
+            .verifyComplete();
+
+    }
+
+    @Test
+    void addMovieInfo() {
+
+        var movieInfo = new MovieInfo("mockId", "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+        Mono<MovieInfo> monoInputMovieInfo = Mono.just(movieInfo);
+
+        when(moviesInfoServiceMock.addMovieInfo(movieInfo))
+            .thenReturn(monoInputMovieInfo);
+
+        webTestClient.post()
+            .uri(MOVIES_INFO_URL)
+            .bodyValue(movieInfo)
+            .exchange()
+            .expectStatus()
+            .isCreated()
+            .expectBody(MovieInfo.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertEquals("mockId", result.getMovieInfoId());
+                assertEquals("Batman Begins", result.getName());
+            });
+
+    }
+
+    @Test
+    void updateMovieInfo() {
+
+        var movieInfo = new MovieInfo("abc", "Updated Dark Knight Rises", 2024, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2024-07-20"));
+        Mono<MovieInfo> monoInputMovieInfo = Mono.just(movieInfo);
+
+        when(moviesInfoServiceMock.updateMovieInfo(movieInfo, "abc"))
+            .thenReturn(monoInputMovieInfo);
+
+        webTestClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("abc"))
+            .bodyValue(movieInfo)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(MovieInfo.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertEquals("abc", result.getMovieInfoId());
+                assertEquals("Updated Dark Knight Rises", result.getName());
+                assertEquals(2024, result.getYear());
+                assertEquals(LocalDate.parse("2024-07-20"), result.getReleaseDate());
+                assertEquals(List.of("Christian Bale", "Tom Hardy"), result.getCast());
+            });
+
+    }
+
+    @Test
+    void deleteMovieInfos() {
+
+        Mono<Void> monoInputMovieInfo = Mono.empty();
+
+        when(moviesInfoServiceMock.deleteMovieInfo("abc"))
+            .thenReturn(monoInputMovieInfo);
+
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("abc"))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(Void.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertNull(result);
+            });
     }
 
 }
