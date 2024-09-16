@@ -126,7 +126,7 @@ public class MoviesInfoControllerIntgTest {
     @Test
     void addMovieInfoConsume() {
         
-        var movieInfo = new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
+        var movieInfo = new MovieInfo(null, "Batman Begins", -2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
                 
         webTestClient.post()
             .uri("/v1/movieinfos")

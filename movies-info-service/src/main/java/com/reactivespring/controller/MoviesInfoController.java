@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reactivespring.domain.MovieInfo;
 import com.reactivespring.service.MoviesInfoService;
 
+import jakarta.validation.Valid;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -40,12 +41,12 @@ public class MoviesInfoController {
 
     @PostMapping("/movieinfos")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<MovieInfo> addMovieInfo(@RequestBody MovieInfo movieInfo) {
+    public Mono<MovieInfo> addMovieInfo(@RequestBody @Valid MovieInfo movieInfo) {
         return moviesInfoService.addMovieInfo(movieInfo);
     }
 
     @PutMapping("/movieinfos/{id}")
-    public Mono<MovieInfo> updateMovieInfo(@RequestBody MovieInfo movieInfo, @PathVariable String id) {
+    public Mono<MovieInfo> updateMovieInfo(@RequestBody @Valid MovieInfo movieInfo, @PathVariable String id) {
         return moviesInfoService.updateMovieInfo(movieInfo, id);
     }
 

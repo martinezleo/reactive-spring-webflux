@@ -1,6 +1,7 @@
 package com.reactivespring.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
 
@@ -105,6 +106,32 @@ public class MoviesInfoControllerUnitTest {
                 var result = resultBody.getResponseBody();
                 assertEquals("mockId", result.getMovieInfoId());
                 assertEquals("Batman Begins", result.getName());
+            });
+
+    }
+
+    @Test
+    void addMovieInfoInputValid() {
+
+        var movieInfo = new MovieInfo("mockId", "", -2005, List.of(""), LocalDate.parse("2005-06-15"));
+        Mono<MovieInfo> monoInputMovieInfo = Mono.just(movieInfo);
+        String expectedError = "movieInfo.cast must be present,movieInfo.name must be present,movieInfo.year must be a valid year";
+
+        when(moviesInfoServiceMock.addMovieInfo(movieInfo))
+            .thenReturn(monoInputMovieInfo);
+
+        webTestClient.post()
+            .uri(MOVIES_INFO_URL)
+            .bodyValue(movieInfo)
+            .exchange()
+            .expectStatus()
+            .isBadRequest()
+            .expectBody(String.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertNotNull(result);
+                assertEquals(result, expectedError);
+                System.out.println(result);
             });
 
     }
