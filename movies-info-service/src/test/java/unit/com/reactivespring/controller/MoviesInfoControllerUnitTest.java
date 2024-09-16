@@ -87,6 +87,24 @@ public class MoviesInfoControllerUnitTest {
     }
 
     @Test
+    void getMovieInfoNotFound() {
+
+        Mono<MovieInfo> monoNotFoundMovieInfo = Mono.empty();
+
+        when(moviesInfoServiceMock.getMovieInfo("def"))
+            .thenReturn(monoNotFoundMovieInfo);
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("def"))
+            .exchange()
+            .expectStatus()
+            .isNotFound();
+
+    }
+
+    @Test
     void addMovieInfo() {
 
         var movieInfo = new MovieInfo("mockId", "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
@@ -205,6 +223,24 @@ public class MoviesInfoControllerUnitTest {
                 var result = resultBody.getResponseBody();
                 assertNull(result);
             });
+    }
+
+    @Test
+    void deleteMovieInfoNotFound() {
+
+        Mono<Void> monoNotFoundMovieInfo = Mono.empty();
+
+        when(moviesInfoServiceMock.deleteMovieInfo("def"))
+            .thenReturn(monoNotFoundMovieInfo);
+
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL + "/{id}")
+                .build("def"))
+            .exchange()
+            .expectStatus()
+            .isNotFound();
+
     }
 
 }

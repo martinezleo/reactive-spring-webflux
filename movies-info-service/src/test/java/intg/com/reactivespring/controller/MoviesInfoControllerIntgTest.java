@@ -102,6 +102,19 @@ public class MoviesInfoControllerIntgTest {
     }
 
     @Test
+    void getMovieInfoNotFound() {
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos/{id}")
+                .build("def"))
+            .exchange()
+            .expectStatus()
+            .isNotFound();
+
+    }
+
+    @Test
     void addMovieInfo() {
 
         var movieInfo = new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15"));
@@ -184,7 +197,7 @@ public class MoviesInfoControllerIntgTest {
     }
 
     @Test
-    void deleteMovieInfos() {
+    void deleteMovieInfo() {
 
         webTestClient.delete()
             .uri(uriBuilder -> uriBuilder
@@ -198,5 +211,18 @@ public class MoviesInfoControllerIntgTest {
                 var result = resultBody.getResponseBody();
                 assertNull(result);
             });
+    }
+
+    @Test
+    void deleteMovieInfoNotFound() {
+
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos/{id}")
+                .build("def"))
+            .exchange()
+            .expectStatus()
+            .isNotFound();
+
     }
 }

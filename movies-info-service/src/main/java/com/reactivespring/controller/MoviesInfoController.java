@@ -36,8 +36,10 @@ public class MoviesInfoController {
     }
 
     @GetMapping("/movieinfos/{id}")
-    public Mono<MovieInfo> getMovieInfo(@PathVariable String id) {
-        return moviesInfoService.getMovieInfo(id);
+    public Mono<ResponseEntity<MovieInfo>> getMovieInfo(@PathVariable String id) {
+        return moviesInfoService.getMovieInfo(id)
+            .map(ResponseEntity.ok()::body)
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @PostMapping("/movieinfos")
@@ -55,7 +57,9 @@ public class MoviesInfoController {
 
     @DeleteMapping("/movieinfos/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteMovieInfo(@PathVariable String id) {
-        return moviesInfoService.deleteMovieInfo(id);
+    public Mono<ResponseEntity<Void>> deleteMovieInfo(@PathVariable String id) {
+        return moviesInfoService.deleteMovieInfo(id)
+            .map(ResponseEntity.ok()::body)
+            .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 }
