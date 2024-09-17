@@ -26,6 +26,14 @@ public class MoviesInfoService {
         return moviesInfoRepository.findById(id).log();
     }
 
+    public Flux<MovieInfo> getMovieInfosByYear(Integer year) {
+        return moviesInfoRepository.findByYear(year).log();
+    }
+
+    public Flux<MovieInfo> getMovieInfosByName(String name) {
+        return moviesInfoRepository.findByName(name).log();
+    }
+
     public Mono<MovieInfo> addMovieInfo(MovieInfo movieInfo) {
         var monoMovieInfo = moviesInfoRepository.save(movieInfo).log();
         return monoMovieInfo;

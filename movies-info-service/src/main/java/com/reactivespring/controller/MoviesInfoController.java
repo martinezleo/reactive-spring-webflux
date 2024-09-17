@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +33,20 @@ public class MoviesInfoController {
 
     @GetMapping("/movieinfos")
     public Flux<MovieInfo> getAllMovieInfos() {
+        
         return moviesInfoService.getAllMovieInfos();
+    }
+
+    @GetMapping(value = "/movieinfos", params = "year")
+    public Flux<MovieInfo> getMovieInfosByYear(@RequestParam(value = "year", required = true) Integer year) {
+        
+        return moviesInfoService.getMovieInfosByYear(year);
+    }
+
+    @GetMapping(value = "/movieinfos", params = "name")
+    public Flux<MovieInfo> getMovieInfosByName(@RequestParam(value = "name", required = true) String name) {
+        
+        return moviesInfoService.getMovieInfosByName(name);
     }
 
     @GetMapping("/movieinfos/{id}")

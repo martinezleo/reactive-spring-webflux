@@ -42,8 +42,8 @@ public class MoviesInfoControllerIntgTest {
     void setup() {
         var movieInfos = List.of(
             new MovieInfo(null, "Batman Begins", 2005, List.of("Christian Bale", "Michael Cane"), LocalDate.parse("2005-06-15")),
-            new MovieInfo(null, "The Dark Knight", 2005, List.of("Christian Bale", "Heath Ledger"), LocalDate.parse("2008-07-18")),
-            new MovieInfo("abc", "Dark Knight Rises", 2005, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"))
+            new MovieInfo(null, "The Dark Knight", 2008, List.of("Christian Bale", "Heath Ledger"), LocalDate.parse("2008-07-18")),
+            new MovieInfo("abc", "Dark Knight Rises", 2012, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"))
         );
 
         movieInfoRepository.saveAll(movieInfos).blockLast();
@@ -112,6 +112,48 @@ public class MoviesInfoControllerIntgTest {
             .expectStatus()
             .isNotFound();
 
+    }
+
+    @Test
+    void getMovieInfosByYear() {
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos")
+                .queryParam("year", 2005)
+                .build())
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBodyList(MovieInfo.class)
+            .consumeWith( resultList -> {
+                var body = resultList.getResponseBody();
+                assert(body.size() == 1);
+                var fluxMovie = body.get(0);
+                assertEquals(2005, fluxMovie.getYear());
+                assertEquals("Batman Begins", fluxMovie.getName());
+            });
+    }
+
+    @Test
+    void getMovieInfosByName() {
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/movieinfos")
+                .queryParam("name", "Batman Begins")
+                .build())
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBodyList(MovieInfo.class)
+            .consumeWith( resultList -> {
+                var body = resultList.getResponseBody();
+                assert(body.size() == 1);
+                var fluxMovie = body.get(0);
+                assertEquals(2005, fluxMovie.getYear());
+                assertEquals("Batman Begins", fluxMovie.getName());
+            });
     }
 
     @Test
