@@ -33,4 +33,8 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: local        
+      database: local 
+
+logging:
+  level:
+    root: debug       

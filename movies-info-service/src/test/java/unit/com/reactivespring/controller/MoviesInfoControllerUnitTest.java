@@ -87,6 +87,64 @@ public class MoviesInfoControllerUnitTest {
     }
 
     @Test
+    void getMovieInfosByYear() {
+
+        var movieInfo = new MovieInfo("abc", "Dark Knight Rises", 2012, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"));
+        Flux<MovieInfo> fluxInputMovieInfo = Flux.just(movieInfo);
+
+        when(moviesInfoServiceMock.getMovieInfosByYear(2012))
+            .thenReturn(fluxInputMovieInfo);
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL)
+                .queryParam("year", 2012)
+                .build())
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBodyList(MovieInfo.class)
+            .consumeWith(resultList -> {
+                var body = resultList.getResponseBody();
+                assert(body.size() == 1);
+                var fluxMovie = body.get(0);
+                assertEquals(2012, fluxMovie.getYear());
+                assertEquals("Dark Knight Rises", fluxMovie.getName());
+                assertEquals("abc", fluxMovie.getMovieInfoId());
+            });
+
+    }
+
+    @Test
+    void getMovieInfosByName() {
+
+        var movieInfo = new MovieInfo("abc", "Dark Knight Rises", 2012, List.of("Christian Bale", "Tom Hardy"), LocalDate.parse("2012-07-20"));
+        Flux<MovieInfo> fluxInputMovieInfo = Flux.just(movieInfo);
+
+        when(moviesInfoServiceMock.getMovieInfosByName("Dark Knight Rises"))
+            .thenReturn(fluxInputMovieInfo);
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(MOVIES_INFO_URL)
+                .queryParam("name", "Dark Knight Rises")
+                .build())
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBodyList(MovieInfo.class)
+            .consumeWith(resultList -> {
+                var body = resultList.getResponseBody();
+                assert(body.size() == 1);
+                var fluxMovie = body.get(0);
+                assertEquals(2012, fluxMovie.getYear());
+                assertEquals("Dark Knight Rises", fluxMovie.getName());
+                assertEquals("abc", fluxMovie.getMovieInfoId());
+            });
+
+    }
+
+    @Test
     void getMovieInfoNotFound() {
 
         Mono<MovieInfo> monoNotFoundMovieInfo = Mono.empty();
