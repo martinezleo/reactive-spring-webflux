@@ -1,4 +1,16 @@
 spring:
+  application:
+    name: movie-info-service
+
+---
+
+logging:
+  level:
+    root: DEBUG
+
+---
+
+spring:
   profiles:
     active: local
 ---
@@ -34,7 +46,3 @@ spring:
       host: localhost
       port: 27017
       database: local 
-
-logging:
-  level:
-    root: debug       
