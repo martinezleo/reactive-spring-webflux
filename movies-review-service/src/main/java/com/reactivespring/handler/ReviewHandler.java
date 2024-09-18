@@ -38,6 +38,12 @@ public class ReviewHandler {
     
     }
 
+    public Mono<ServerResponse> getReviewsByInfoId(ServerRequest request) {
+        Long movieInfoId = Long.valueOf(request.queryParam("movieInfoId").get());
+        return ServerResponse.status(HttpStatus.OK)
+            .body(reviewRepository.findByMovieInfoId(movieInfoId).log(), Review.class);         
+    }
+
     public Mono<ServerResponse> updateReview(ServerRequest request) {
         String reviewId = String.valueOf(request.pathVariable("id"));
         return request.bodyToMono(Review.class)
@@ -74,5 +80,5 @@ public class ReviewHandler {
             });
       
     }
-    
+
 }

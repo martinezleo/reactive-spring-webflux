@@ -62,12 +62,12 @@ public class ReviewsIntgTest {
             .consumeWith( resultList -> {
                 var body = resultList.getResponseBody();
                 assert(body.size() == 2);
-                var fluxReview = body.get(0);
+                var fluxReview = body.get(1);
                 assertNotNull(fluxReview.getReviewId());
                 assertEquals(1L, fluxReview.getMovieInfoId());
                 assertEquals("Movie was exhilarating", fluxReview.getComment());
                 assertEquals(5.0, fluxReview.getRating());
-                fluxReview = body.get(1);
+                fluxReview = body.get(0);
                 assertNotNull(fluxReview.getReviewId());
                 assertEquals(2L, fluxReview.getMovieInfoId());
                 assertEquals("Movie even more exciting than original", fluxReview.getComment());
@@ -76,6 +76,27 @@ public class ReviewsIntgTest {
             });
 
 
+    }
+
+    @Test
+    void getReviewsByInfoId() {
+
+        webTestClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .path(REVIEWS_URL)
+                .queryParam("movieInfoId", 1L)
+                .build())
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBodyList(Review.class)
+            .consumeWith( resultList -> {
+                var body = resultList.getResponseBody();
+                assert(body.size() == 1);
+                var fluxReview = body.get(0);
+                assertEquals(1L, fluxReview.getMovieInfoId());
+                assertEquals("Movie was exhilarating", fluxReview.getComment());
+            });
     }
 
     @Test
