@@ -18,6 +18,7 @@ import reactor.test.StepVerifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -121,6 +122,25 @@ public class ReviewsIntgTest {
                 assertEquals("Awesome movie!!", result.getComment());
                 assertEquals(3L, result.getMovieInfoId());
                 assertEquals(9.0, result.getRating());
+            });
+
+    }
+
+    @Test
+    void deleteMovieInfo() {
+
+        
+        webTestClient.delete()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/reviews/{id}")
+                .build("abc"))
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(Void.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertNull(result);
             });
 
     }

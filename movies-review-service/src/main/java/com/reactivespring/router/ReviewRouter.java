@@ -21,7 +21,8 @@ public class ReviewRouter {
                 .nest(RequestPredicates.path("/v1/reviews"), builder -> { 
                     builder.GET("", request -> reviewHandler.getAllReviews(request))
                            .POST("", request -> reviewHandler.addReview(request))
-                           .PUT("/{id}", request -> reviewHandler.updateReview(request));
+                           .PUT("/{id}", request -> reviewHandler.updateReview(request))
+                           .DELETE("/{id}", request -> reviewHandler.deleteReview(request));
                 })
                 .build();
     }

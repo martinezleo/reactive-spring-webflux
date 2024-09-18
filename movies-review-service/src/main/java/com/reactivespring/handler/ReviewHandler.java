@@ -56,5 +56,31 @@ public class ReviewHandler {
             .switchIfEmpty(ServerResponse.notFound().build());       
     }
 
+    public Mono<ServerResponse> deleteReview(ServerRequest request) {
+        String reviewId = String.valueOf(request.pathVariable("id"));
 
+        return reviewRepository.findById(reviewId).log()
+            .hasElement()          
+            .flatMap(hasElement -> {
+                if(hasElement) {
+                    return reviewRepository.deleteById(reviewId).log()
+                    .flatMap(monoReview -> {
+                        return ServerResponse.status(HttpStatus.NO_CONTENT).bodyValue(monoReview);
+                    });
+                }
+                else {
+                    return ServerResponse.status(HttpStatus.NOT_FOUND).build();
+                }
+            });
+      
+    }
+
+    public Mono<ServerResponse> deleteReview2(ServerRequest request) {
+        String reviewId = String.valueOf(request.pathVariable("id"));
+
+        return reviewRepository.deleteById(reviewId).log()
+        .flatMap(monoReview -> 
+            ServerResponse.status(HttpStatus.NO_CONTENT).bodyValue(monoReview)
+        );      
+    }
 }
