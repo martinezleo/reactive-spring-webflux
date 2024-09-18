@@ -6,7 +6,6 @@ plugins {
 
 group = 'com.reactivespring'
 version = '0.0.1-SNAPSHOT'
-//sourceCompatibility = '11'
 
 java {
 	toolchain {
@@ -37,7 +36,7 @@ dependencies {
 
 	//test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring30x:4.11.0'
 	testImplementation 'io.projectreactor:reactor-test'
 }
 
