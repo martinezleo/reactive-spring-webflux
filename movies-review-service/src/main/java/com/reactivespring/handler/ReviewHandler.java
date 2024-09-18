@@ -33,9 +33,28 @@ public class ReviewHandler {
     }
 
     public Mono<ServerResponse> getAllReviews(ServerRequest request) {
-
-        return ServerResponse.status(HttpStatus.OK).body(reviewRepository.findAll().log(), Review.class);
-        
+        return ServerResponse.status(HttpStatus.OK)
+            .body(reviewRepository.findAll().log(), Review.class);       
+    
     }
+
+    public Mono<ServerResponse> updateReview(ServerRequest request) {
+        String reviewId = String.valueOf(request.pathVariable("id"));
+        return request.bodyToMono(Review.class)
+            .flatMap(inputReview -> {
+                return reviewRepository.findById(reviewId).log()
+                    .flatMap(origReview -> {
+                        origReview.setMovieInfoId(inputReview.getMovieInfoId());
+                        origReview.setComment(inputReview.getComment());
+                        origReview.setRating(inputReview.getRating());
+                        return reviewRepository.save(origReview).log();
+                    });
+            })
+            .flatMap(monoReview -> 
+                ServerResponse.status(HttpStatus.OK).bodyValue(monoReview)
+            )
+            .switchIfEmpty(ServerResponse.notFound().build());       
+    }
+
 
 }

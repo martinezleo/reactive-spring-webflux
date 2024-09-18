@@ -38,7 +38,7 @@ public class ReviewsIntgTest {
     @BeforeEach
     void setup() {
         List<Review> movieReviews = List.of(
-            new Review(null, 1L, "Movie was exhilarating", 5.0),
+            new Review("abc", 1L, "Movie was exhilarating", 5.0),
             new Review(null, 2L, "Movie even more exciting than original", 5.0));
     
         reviewRepository.saveAll(movieReviews).log().blockLast();
@@ -99,5 +99,29 @@ public class ReviewsIntgTest {
                 assertEquals(5.0, result.getRating());
             })
             .verifyComplete();
+    }
+
+    @Test
+    void updateMovieInfo() {
+
+        var review = new Review("abc", 3L, "Awesome movie!!", 9.0);
+        
+        webTestClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .path("/v1/reviews/{id}")
+                .build("abc"))
+            .bodyValue(review)
+            .exchange()
+            .expectStatus()
+            .is2xxSuccessful()
+            .expectBody(Review.class)
+            .consumeWith( resultBody -> {
+                var result = resultBody.getResponseBody();
+                assertEquals("abc", result.getReviewId());
+                assertEquals("Awesome movie!!", result.getComment());
+                assertEquals(3L, result.getMovieInfoId());
+                assertEquals(9.0, result.getRating());
+            });
+
     }
 }

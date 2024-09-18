@@ -1,15 +1,14 @@
 spring:
   application:
     name: movie-info-service
-
 ---
-
+server:
+  port: 8080
+---
 logging:
   level:
     root: DEBUG
-
 ---
-
 spring:
   profiles:
     active: local
