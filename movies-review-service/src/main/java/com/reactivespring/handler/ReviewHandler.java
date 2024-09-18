@@ -74,13 +74,5 @@ public class ReviewHandler {
             });
       
     }
-
-    public Mono<ServerResponse> deleteReview2(ServerRequest request) {
-        String reviewId = String.valueOf(request.pathVariable("id"));
-
-        return reviewRepository.deleteById(reviewId).log()
-        .flatMap(monoReview -> 
-            ServerResponse.status(HttpStatus.NO_CONTENT).bodyValue(monoReview)
-        );      
-    }
+    
 }
