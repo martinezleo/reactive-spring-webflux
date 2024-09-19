@@ -16,6 +16,7 @@ public class FluxAndMonoGeneratorService {
     }
 
     public Flux<String> flatStringDelay(String s) {
+        @SuppressWarnings("unused")
         var delay =  new Random().nextInt(1000);
         return Flux.just(s.toUpperCase().split("")).delayElements(Duration.ofMillis(0));
     }
